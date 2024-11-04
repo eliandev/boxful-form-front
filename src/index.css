@@ -1,0 +1,12 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "Albert Sans";
+  src: url(./assets/font/AlbertSans-VariableFont_wght.ttf);
+}
+
+body {
+  @apply text-secondaryText font-AlbertSans bg-background;
+}
