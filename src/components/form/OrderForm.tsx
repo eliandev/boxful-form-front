@@ -1,32 +1,24 @@
-import { Form, InputNumber, Input, Button } from "antd";
-import type { FormProps } from "antd";
 import { useState } from "react";
+
+import { Form, InputNumber, Input, Button } from "antd";
+
+import { OrderFormProps } from "./utils/types/typing";
+
 import PlusIcon from "../../assets/images/plus-icon.svg";
 import ForwardIcon from "../../assets/images/forward-icon.svg";
 import BackIcon from "../../assets/images/back-icon.svg";
 import RemoveIcon from "../../assets/images/remove-icon.svg";
 
-type OrderForm = {
-  setStep: (step: number) => void;
-  onFinishOrder: FormProps["onFinish"];
-  onFinishFailed: FormProps["onFinishFailed"];
-};
-
-type Product = {
-  large: string;
-  width: string;
-  height: string;
-  weight: string;
-  content: string;
-};
-
-export const OrderForm: React.FC<OrderForm> = ({
+export const OrderForm: React.FC<OrderFormProps> = ({
   setStep,
   onFinishOrder,
   onFinishFailed,
+  setProducts,
+  handleRemove,
+  products,
 }) => {
   const [form] = Form.useForm();
-  const [products, setProducts] = useState<Product[]>([]);
+
   const [error, setErrors] = useState("");
 
   const handleAdd = () => {
@@ -49,7 +41,7 @@ export const OrderForm: React.FC<OrderForm> = ({
         width: values.width,
         height: values.height,
         weight: values.weight,
-        content: values.product,
+        product: values.product,
       },
     ]);
 
@@ -59,10 +51,6 @@ export const OrderForm: React.FC<OrderForm> = ({
 
   const resetErrors = () => {
     setErrors("");
-  };
-
-  const handleRemove = (index: number) => {
-    setProducts(products.filter((_, i) => i !== index));
   };
 
   const handleBack = () => {
@@ -148,7 +136,7 @@ export const OrderForm: React.FC<OrderForm> = ({
             <Form.Item label="Peso en libras" name={`weight-${index}`}>
               <InputNumber
                 defaultValue={product.weight}
-                min="1"
+                min={1}
                 addonAfter={"lb"}
                 controls
               />
@@ -159,7 +147,7 @@ export const OrderForm: React.FC<OrderForm> = ({
               name={`product-${index}`}
             >
               <Input
-                defaultValue={product.content}
+                defaultValue={product.product}
                 size="large"
                 placeholder="Contenido"
               />
@@ -170,7 +158,7 @@ export const OrderForm: React.FC<OrderForm> = ({
                   className="input-measurement"
                   addonAfter={"cm"}
                   defaultValue={product.large}
-                  min="1"
+                  min={1}
                   controls
                 />
               </Form.Item>
@@ -179,7 +167,7 @@ export const OrderForm: React.FC<OrderForm> = ({
                   className="input-measurement"
                   addonAfter={"cm"}
                   defaultValue={product.height}
-                  min="1"
+                  min={1}
                   controls
                 />
               </Form.Item>
@@ -188,7 +176,7 @@ export const OrderForm: React.FC<OrderForm> = ({
                   className="input-measurement"
                   addonAfter={"cm"}
                   defaultValue={product.width}
-                  min="1"
+                  min={1}
                   controls
                 />
               </Form.Item>

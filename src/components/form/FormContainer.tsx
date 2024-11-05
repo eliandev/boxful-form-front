@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { FormProps } from "antd";
 
 import { FormValuesType } from "./utils/types/typing";
+import { Product } from "./utils/types/typing";
 
 import { UserForm } from "./UserForm";
 import { OrderForm } from "./OrderForm";
@@ -31,6 +32,8 @@ export const FormContainer = () => {
     ],
   });
 
+  const [products, setProducts] = useState<Product[]>([]);
+
   const onFinish: FormProps["onFinish"] = (values) => {
     setData(values);
     if (step === 0) {
@@ -38,17 +41,21 @@ export const FormContainer = () => {
     }
   };
 
-  const onFinishOrder: FormProps["onFinish"] = (values) => {
-    setData({ ...data, orders: values });
-
-    console.log(data);
+  const onFinishOrder: FormProps["onFinish"] = () => {
+    setData({ ...data, orders: products });
     if (step === 1) {
       setStep(2);
     }
+
+    console.log(data);
   };
 
   const onFinishFailed: FormProps["onFinishFailed"] = (errorInfo) => {
     console.log("Failed:", errorInfo);
+  };
+
+  const handleRemove = (index: number) => {
+    setProducts(products.filter((_, i) => i !== index));
   };
 
   return (
@@ -64,6 +71,9 @@ export const FormContainer = () => {
           setStep={setStep}
           onFinishOrder={onFinishOrder}
           onFinishFailed={onFinishFailed}
+          setProducts={setProducts}
+          handleRemove={handleRemove}
+          products={products}
         />
       )}
     </>
