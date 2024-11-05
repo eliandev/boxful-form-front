@@ -20,6 +20,15 @@ export const FormContainer = () => {
     state: "",
     referencePoint: "",
     indications: "",
+    orders: [
+      {
+        product: "",
+        large: 0,
+        width: 0,
+        height: 0,
+        weight: 0,
+      },
+    ],
   });
 
   const onFinish: FormProps["onFinish"] = (values) => {
@@ -30,7 +39,9 @@ export const FormContainer = () => {
   };
 
   const onFinishOrder: FormProps["onFinish"] = (values) => {
-    setData({ ...data, order: values });
+    setData({ ...data, orders: values });
+
+    console.log(data);
     if (step === 1) {
       setStep(2);
     }

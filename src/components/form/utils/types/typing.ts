@@ -21,4 +21,13 @@ export type FormValuesType = {
   state: string;
   referencePoint: string;
   indications: string;
+  orders?: [
+    {
+      product: string;
+      large: number;
+      width: number;
+      height: number;
+      weight: number;
+    },
+  ];
 };
