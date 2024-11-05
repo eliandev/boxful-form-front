@@ -55,8 +55,17 @@ export const UserForm: React.FC<UserFormProps> = ({
       name="user-form"
       layout="vertical"
       initialValues={{
+        name: data.name || "",
+        lastName: data.lastName || "",
+        phone: data.phone || "",
+        email: data.email || "",
+        collectAddress: data.collectAddress || "",
+        date: data.date || "",
         department: data.department ? data.department : location.department,
         state: data.state ? data.state : location.state,
+        referencePoint: data.referencePoint || "",
+        deliveryAddress: data.deliveryAddress || "",
+        indications: data.indications || "",
       }}
       onFinish={onFinish}
       onFinishFailed={onFinishFailed}
