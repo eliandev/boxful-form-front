@@ -1,8 +1,11 @@
+import { useState } from "react";
 import dayjs from "dayjs";
 import { Button, DatePicker, Form, Input, Space } from "antd";
+import type { FormProps } from "antd";
 
 import Departments from "./utils/data/deparment.json";
-import { Location, StatesType } from "./utils/types/typing";
+import States from "./utils/data/municipalities.json";
+import { Location, StatesType, FormValuesType } from "./utils/types/typing";
 
 import PhoneSelect from "./ui/PhoneSelect.tsx";
 import { SelectUI } from "./ui/SelectUI.tsx";
@@ -11,25 +14,61 @@ import AddresIcon from "../../assets/images/address-icon.svg";
 import ForwardIcon from "../../assets/images/forward-icon.svg";
 
 type UserFormProps = {
-  location: Location;
-  handleDepartmentChange: (department: string) => void;
-  filteredStates: StatesType[];
-  handleStateChange: (state: string) => void;
+  data: FormValuesType;
+  onFinish: FormProps["onFinish"];
+  onFinishFailed: FormProps["onFinishFailed"];
 };
 
 export const UserForm: React.FC<UserFormProps> = ({
-  location,
-  handleDepartmentChange,
-  filteredStates,
-  handleStateChange,
+  data,
+  onFinish,
+  onFinishFailed,
 }) => {
+  const [location, setLocation] = useState<Location>({
+    department: "06", //San Salvador
+    state: "33", // San Salvador Norte
+  });
+
+  const [filteredStates, setFilteredStates] = useState<StatesType[]>(
+    States.filter((state) => state.department === location.department)
+  );
+
+  const handleDepartmentChange = (departmentValue: string) => {
+    setLocation((prev: Location) => ({
+      ...prev,
+      department: departmentValue,
+      state: "",
+    }));
+
+    const newFilteredStates = States.filter(
+      (state) => state.department === departmentValue
+    );
+    setFilteredStates(newFilteredStates);
+  };
+
+  const handleStateChange = (stateValue: string) => {
+    setLocation((prev: Location) => ({ ...prev, state: stateValue }));
+  };
+
   return (
-    <>
+    <Form
+      name="user-form"
+      layout="vertical"
+      initialValues={{
+        department: data.department ? data.department : location.department,
+        state: data.state ? data.state : location.state,
+      }}
+      onFinish={onFinish}
+      onFinishFailed={onFinishFailed}
+      scrollToFirstError={true}
+      preserve={true}
+      className="mt-6 pt-10 px-12 pb-1"
+    >
       <div className="grid grid-cols-3 gap-4">
         <Form.Item
           className="col-span-2"
           label="📍 Dirección de recolección"
-          name="collect-address"
+          name="collectAddress"
           rules={[
             {
               required: true,
@@ -37,7 +76,11 @@ export const UserForm: React.FC<UserFormProps> = ({
             },
           ]}
         >
-          <Input size="large" placeholder="Ingrese dirección de recolección" />
+          <Input
+            defaultValue={data.collectAddress || ""}
+            size="large"
+            placeholder="Ingrese dirección de recolección"
+          />
         </Form.Item>
 
         <Form.Item
@@ -48,6 +91,8 @@ export const UserForm: React.FC<UserFormProps> = ({
           <DatePicker
             size="large"
             style={{ width: "100%" }}
+            defaultValue={data.date || ""}
+            value={data.date || ""}
             placeholder="Fecha"
             minDate={dayjs()}
           />
@@ -65,12 +110,16 @@ export const UserForm: React.FC<UserFormProps> = ({
             },
           ]}
         >
-          <Input size="large" placeholder="Ingrese nombres" />
+          <Input
+            defaultValue={data.name || ""}
+            size="large"
+            placeholder="Ingrese nombres"
+          />
         </Form.Item>
 
         <Form.Item
           label="Apellidos"
-          name="last-name"
+          name="lastName"
           rules={[
             {
               required: true,
@@ -78,7 +127,11 @@ export const UserForm: React.FC<UserFormProps> = ({
             },
           ]}
         >
-          <Input size="large" placeholder="Ingrese apellidos" />
+          <Input
+            defaultValue={data.lastName || ""}
+            size="large"
+            placeholder="Ingrese apellidos"
+          />
         </Form.Item>
 
         <Form.Item
@@ -95,12 +148,16 @@ export const UserForm: React.FC<UserFormProps> = ({
             },
           ]}
         >
-          <Input size="large" placeholder="Ingrese correo electrónico" />
+          <Input
+            defaultValue={data.email || ""}
+            size="large"
+            placeholder="Ingrese correo electrónico"
+          />
         </Form.Item>
       </div>
 
       <div className="flex gap-4">
-        <PhoneSelect />
+        <PhoneSelect defaultValue={data.phone} />
 
         <Space.Compact style={{ width: "100%" }}>
           <img
@@ -110,7 +167,7 @@ export const UserForm: React.FC<UserFormProps> = ({
           />
           <Form.Item
             label="📍Dirección del destinatario"
-            name="delivery-address"
+            name="deliveryAddress"
             className="w-full"
             rules={[
               {
@@ -120,6 +177,7 @@ export const UserForm: React.FC<UserFormProps> = ({
             ]}
           >
             <Input
+              defaultValue={data.deliveryAddress || ""}
               size="large"
               placeholder="Ingrese dirección del destinatario"
             />
@@ -130,7 +188,7 @@ export const UserForm: React.FC<UserFormProps> = ({
       <div className="grid grid-cols-3 gap-4">
         <Form.Item
           label="Departamento"
-          name="departament"
+          name="department"
           rules={[
             {
               required: true,
@@ -140,7 +198,7 @@ export const UserForm: React.FC<UserFormProps> = ({
         >
           <SelectUI
             placeholder="Departamento"
-            defaultValue={location.department}
+            value={data.department ? data.department : location.department}
             options={Departments}
             onChange={handleDepartmentChange}
           />
@@ -157,7 +215,7 @@ export const UserForm: React.FC<UserFormProps> = ({
         >
           <SelectUI
             placeholder="Municipio"
-            defaultValue={location.state}
+            value={data.state ? data.state : location.state}
             options={filteredStates}
             onChange={handleStateChange}
           />
@@ -182,7 +240,7 @@ export const UserForm: React.FC<UserFormProps> = ({
         </Form.Item> */}
         <Form.Item
           label="Punto de Referencia"
-          name="reference-point"
+          name="referencePoint"
           rules={[
             {
               required: true,
@@ -190,7 +248,11 @@ export const UserForm: React.FC<UserFormProps> = ({
             },
           ]}
         >
-          <Input size="large" placeholder="Ingrese punto de referencia" />
+          <Input
+            defaultValue={data.referencePoint || ""}
+            size="large"
+            placeholder="Ingrese punto de referencia"
+          />
         </Form.Item>
       </div>
 
@@ -203,7 +265,11 @@ export const UserForm: React.FC<UserFormProps> = ({
           },
         ]}
       >
-        <Input size="large" placeholder="Indicaciones al repartidor" />
+        <Input
+          defaultValue={data.indications || ""}
+          size="large"
+          placeholder="Indicaciones al repartidor"
+        />
       </Form.Item>
 
       <Form.Item wrapperCol={{ offset: 19, span: 5 }}>
@@ -220,6 +286,6 @@ export const UserForm: React.FC<UserFormProps> = ({
           />
         </Button>
       </Form.Item>
-    </>
+    </Form>
   );
 };

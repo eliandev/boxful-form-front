@@ -11,7 +11,7 @@ type Country = {
   mask: string;
 };
 
-const PhoneSelect = () => {
+const PhoneSelect: React.FC<{ defaultValue: string }> = ({ defaultValue }) => {
   const [selectedCountry, setSelectedCountry] = useState<Country | undefined>(
     Countries.find((country) => country.code === "SV")
   );
@@ -73,6 +73,7 @@ const PhoneSelect = () => {
             ))}
           </Select>
         }
+        defaultValue={defaultValue || ""}
         style={{ width: "300px" }}
         placeholder={`Ej, ${selectedCountry?.mask}`}
         size="large"

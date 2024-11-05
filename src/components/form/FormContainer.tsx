@@ -1,45 +1,39 @@
-import { Form } from "antd";
-import type { FormProps } from "antd";
 import { useState } from "react";
+import type { FormProps } from "antd";
+
+import { FormValuesType } from "./utils/types/typing";
 
 import { UserForm } from "./UserForm";
 import { OrderForm } from "./OrderForm";
 
-import States from "./utils/data/municipalities.json";
-import { Location, StatesType } from "./utils/types/typing";
-
 export const FormContainer = () => {
-  const [step, setStep] = useState(1);
-
-  const [location, setLocation] = useState<Location>({
-    department: "06", //San Salvador
-    state: "33", // San Salvador Norte
+  const [step, setStep] = useState(0);
+  const [data, setData] = useState<FormValuesType>({
+    collectAddress: "",
+    date: "",
+    name: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    deliveryAddress: "",
+    department: "",
+    state: "",
+    referencePoint: "",
+    indications: "",
   });
 
-  const [filteredStates, setFilteredStates] = useState<StatesType[]>(
-    States.filter((state) => state.department === location.department)
-  );
-
-  const handleDepartmentChange = (departmentValue: string) => {
-    setLocation((prev: Location) => ({
-      ...prev,
-      department: departmentValue,
-      state: "",
-    }));
-
-    const newFilteredStates = States.filter(
-      (state) => state.department === departmentValue
-    );
-    setFilteredStates(newFilteredStates);
-  };
-
-  const handleStateChange = (stateValue: string) => {
-    setLocation((prev: Location) => ({ ...prev, state: stateValue }));
-  };
-
   const onFinish: FormProps["onFinish"] = (values) => {
-    setStep(2);
-    console.log("Success:", values);
+    setData(values);
+    if (step === 0) {
+      setStep(1);
+    }
+  };
+
+  const onFinishOrder: FormProps["onFinish"] = (values) => {
+    setData({ ...data, order: values });
+    if (step === 1) {
+      setStep(2);
+    }
   };
 
   const onFinishFailed: FormProps["onFinishFailed"] = (errorInfo) => {
@@ -47,27 +41,20 @@ export const FormContainer = () => {
   };
 
   return (
-    <Form
-      name="basic"
-      layout="vertical"
-      initialValues={{
-        deparment: location.department,
-        state: location.state,
-      }}
-      onFinish={onFinish}
-      onFinishFailed={onFinishFailed}
-      className="mt-6 pt-10 px-12 pb-1"
-    >
-      {step === 1 ? (
+    <>
+      {step === 0 ? (
         <UserForm
-          location={location}
-          handleDepartmentChange={handleDepartmentChange}
-          filteredStates={filteredStates}
-          handleStateChange={handleStateChange}
+          data={data}
+          onFinish={onFinish}
+          onFinishFailed={onFinishFailed}
         />
       ) : (
-        <OrderForm />
+        <OrderForm
+          setStep={setStep}
+          onFinishOrder={onFinishOrder}
+          onFinishFailed={onFinishFailed}
+        />
       )}
-    </Form>
+    </>
   );
 };
