@@ -196,7 +196,7 @@ export const OrderForm: React.FC<OrderForm> = ({
 
             <Button
               className="absolute bottom-2 right-0 border-none bg-opacity-0 p-5 text-lg"
-              onClick={handleRemove}
+              onClick={() => handleRemove(index)}
             >
               <img src={RemoveIcon} alt="Remove Icon" />
             </Button>
