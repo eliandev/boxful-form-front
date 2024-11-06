@@ -73,6 +73,7 @@ const PhoneSelect: React.FC<{ defaultValue: string }> = ({ defaultValue }) => {
             ))}
           </Select>
         }
+        stringMode={true}
         defaultValue={defaultValue || ""}
         style={{ width: "300px" }}
         placeholder={`Ej, ${selectedCountry?.mask}`}

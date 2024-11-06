@@ -7,6 +7,8 @@ import { Product } from "./utils/types/typing";
 import { UserForm } from "./UserForm";
 import { OrderForm } from "./OrderForm";
 
+import postUser from "../../actions/post-user";
+
 export const FormContainer = () => {
   const [step, setStep] = useState(0);
   const [data, setData] = useState<FormValuesType>({
@@ -42,12 +44,21 @@ export const FormContainer = () => {
   };
 
   const onFinishOrder: FormProps["onFinish"] = () => {
-    setData({ ...data, orders: products });
+    const updatedData = { ...data, orders: products }; // Create the updated data object
+
+    setData(updatedData);
+
     if (step === 1) {
       setStep(2);
     }
 
-    console.log(data);
+    postUser(updatedData)
+      .then((response) => {
+        console.log("User posted successfully:", response);
+      })
+      .catch((error) => {
+        console.error("Failed to post user:", error);
+      });
   };
 
   const onFinishFailed: FormProps["onFinishFailed"] = (errorInfo) => {
