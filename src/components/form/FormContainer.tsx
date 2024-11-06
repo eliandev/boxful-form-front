@@ -8,6 +8,7 @@ import { UserForm } from "./UserForm";
 import { OrderForm } from "./OrderForm";
 
 import postUser from "../../actions/post-user";
+import { Success } from "./ui/Success";
 
 export const FormContainer = () => {
   const [step, setStep] = useState(0);
@@ -71,13 +72,15 @@ export const FormContainer = () => {
 
   return (
     <>
-      {step === 0 ? (
+      {step === 0 && (
         <UserForm
           data={data}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
         />
-      ) : (
+      )}
+
+      {step === 1 && (
         <OrderForm
           setStep={setStep}
           onFinishOrder={onFinishOrder}
@@ -87,6 +90,8 @@ export const FormContainer = () => {
           products={products}
         />
       )}
+
+      {step === 2 && <Success data={data} />}
     </>
   );
 };
